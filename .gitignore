@@ -6,3 +6,5 @@ __pycache__/
 
 # Files to ignore
 capture.png
+stats/*
+*.csv
