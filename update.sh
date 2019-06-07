@@ -22,22 +22,31 @@ function download_mid {
     fi
 }
 
+# need to restart in the middle if script closed unexpectedly
+if [ -f .update_progress ]; then
+    #figure out how to start up here
+fi
 year=$(date '+%Y')
 month=$(date '+%m')
 start_year=$year
+
+# If past May, AY is next calendar year
 if [[ month -ge 6 ]]; then
 	start_year=$((start_year + 1))
 fi
 
+# Download each of the next 4 class years
 for i in {0..3}; do
 	echo "Updating class of $((start_year + i))."
 	download_year $((start_year + i))
 done
 
+# Now update the embeddings
 pickle_dir=embeddings_pkl
+# backup the old directory
 if [ -d $pickle_dir ]
-mv $pickle_dir $pickle_dir.$(date +%Y.%m.%d)
-mkdir $pickle_dir
+   cp $pickle_dir $pickle_dir.$(date +%Y.%m.%d)
+fi
 
 for x in imgs/MIDS/*; do
     python3 cgi-bin/embeddings.py $x
