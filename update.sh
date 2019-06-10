@@ -72,6 +72,12 @@ for ((i=index; i < 3; i++)); do
   alpha=0000 # reset alpha in case we resumed
 done
 
+echo ""
+echo 'print("="*80)' | python
+echo 'print("="+" "*29 + "Embedding Extraction" + " "*29 + "=")' | python
+echo 'print("="*80)' | python
+
+
 # Now update the embeddings
 pickle_dir="embeddings_pkl"
 
@@ -82,6 +88,8 @@ fi
 
 source venv/bin/activate
 
-for x in imgs/MIDS/*; do
-    python3 cgi-bin/embeddings.py $x
+
+for ((i=start_year; i<start_year+4; i++)); do
+    python3 cgi-bin/embeddings.py imgs/MIDS/$i 2>> log.$(date +%Y.%m.%d)
+    mv imgs/MIDS/$i.pkl embeddings_pkl/$i
 done
