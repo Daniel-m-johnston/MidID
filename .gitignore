@@ -4,6 +4,7 @@ bootstrap/
 imgs/
 __pycache__/
 venv
+embeddings_pkl.*
 
 # Files to ignore
 capture.png
