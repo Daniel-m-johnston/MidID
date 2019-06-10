@@ -3,8 +3,10 @@
 bootstrap/
 imgs/
 __pycache__/
+venv
 
 # Files to ignore
 capture.png
 stats/*
 *.csv
+.update_progress
