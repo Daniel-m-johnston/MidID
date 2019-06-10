@@ -2,46 +2,59 @@ import face_recognition
 import pickle
 import numpy as np
 import os
+import sys
 import argparse
 from resize_imgs import exif_open
 
+
+def progress_bar(progress, length):
+    bar_length = 78
+    prog_pcnt = float(progress)/length
+    bar_fill = int(bar_length * prog_pcnt)
+    space_fill = bar_length - bar_fill
+    fill = '#'*bar_fill + '\u001b[0m' + '-'*space_fill
+    bar = '\r[\u001b[32m' + fill + ']\n' + str(progress) + ' of ' + str(length)
+    print(bar, end='', flush=True)
+    print('\033[2A')
+
+
 def extract_embeddings_from_directory(unknown_photo_directory,alpha_named_files=True):
-	'''
-	Takes the name of a directory
-	Creates a list of embeddings of all photos in the directory
-	Creates a list of the file names in the directory
-	'''
-	count = 1
-	embeddings = []
-	img_files = []
-	file_list = os.listdir(unknown_photo_directory)
-	for img_file in file_list:
-		full_filename = unknown_photo_directory + '/' + img_file
-
-		print("Loading file ",count," of ",len(file_list),'\t',img_file)
-		count+=1
+    '''
+    Takes the name of a directory
+    Creates a list of embeddings of all photos in the directory
+    Creates a list of the file names in the directory
+    '''
+    count = 1
+    embeddings = []
+    img_files = []
+    file_list = os.listdir(unknown_photo_directory)
+    print('Extracting embeddings from ' + unknown_photo_directory)
+    for img_file in file_list:
+        full_filename = unknown_photo_directory + '/' + img_file
+        progress_bar(count,len(file_list))
+		#print("Loading file ",count," of ",len(file_list),'\t',img_file)
+        count+=1
 		# Load image file
-		try:
-			img = face_recognition.load_image_file(full_filename)
-		except ValueError:
-			print("Failed to open file ",img_file)
-			continue
-
-		# Extract embedding
-		try:
-            		encoding = face_recognition.face_encodings(img)[0]
-		except IndexError:
-			print("Unable to locate face in photo. Check image file",img_file)
-			continue
-
-		# Add to list
-		embeddings.append(encoding)
-		if alpha_named_files:
-			alpha = img_file[:6]
-			img_files.append(alpha)
-		else:
-			img_files.append(img_file)
-	return embeddings, img_files
+        try:
+            img = face_recognition.load_image_file(full_filename)
+        except (ValueError, OSError) as e:
+            print("Failed to open file ",img_file, file=sys.stderr)
+            continue
+        # Extract embedding
+        try:
+            encoding = face_recognition.face_encodings(img)[0]
+        except IndexError:
+            print("Unable to locate face in photo. Check image file",img_file,file=sys.stderr)
+            continue
+        # Add to list
+        embeddings.append(encoding)
+        if alpha_named_files:
+            alpha = img_file[:6]
+            img_files.append(alpha)
+        else:
+            img_files.append(img_file)
+    print('\r' + ' '*80 + '\r' + '\033[2A')
+    return embeddings, img_files
 
 def img2alpha(imageio_img, embeddings, embedding_IDs):
 	'''
@@ -100,9 +113,7 @@ def main():
 	embeddings, img_files = extract_embeddings_from_directory(img_directory,True)
 
 	# save data to file
-	print("Saving to file",end="...")
 	save_embeddings(img_directory+'.pkl',embeddings, img_files)
-	print("Done")
 
 
 if __name__ == "__main__":
