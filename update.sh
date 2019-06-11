@@ -24,6 +24,7 @@ function download_year {
     fi
     cd imgs/MIDS/$1
 
+	  echo -e "\rDownloading class of $1.\n"
     for ((j=start_alpha; j < 9999; j++)); do
         last_four=$(printf "%04d" $j)
 		    download_mid $class_year$last_four
@@ -64,7 +65,7 @@ if [ -f $progress_file ]; then
     alpha=${progress[2]}
     resume=${start_year:2}
     resume=$((resume + index))
-    echo "Resuming from ${resume}$alpha"
+    echo -e "Resuming from ${resume}$alpha\n"
 
 # otherwise, figure out the date to know what classes can be updated
 else
@@ -80,7 +81,7 @@ fi
 
 # Download each of the next 4 class years
 for ((i=index; i < 3; i++)); do
-	echo "Updating class of $((start_year + i))."
+#	echo "Updating class of $((start_year + i)).\n"
   index=$i # update index for progress tracking
 	download_year $((start_year + i)) $alpha
   alpha=0000 # reset alpha in case we resumed
