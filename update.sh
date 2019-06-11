@@ -6,6 +6,12 @@ function progress_update {
     echo "$start_year $index $1"
 }
 
+
+function progress_bar {
+    python3 ../../../progress_bar.py $1 $2
+}
+
+
 function download_year {
 	  class_year=${1:2}
 
@@ -14,7 +20,7 @@ function download_year {
     start_alpha=$((10#$start_alpha))
 
     if [ ! -d imgs/MIDS/$1 ]; then
-        mkdir imgs/MIDS/$1
+        mkdir -p imgs/MIDS/$1
     fi
     cd imgs/MIDS/$1
 
@@ -22,6 +28,7 @@ function download_year {
         last_four=$(printf "%04d" $j)
 		    download_mid $class_year$last_four
         progress_update $last_four > ../../../$progress_file
+        progress_bar $j 9999
 	  done
     cd ../../..
 }
@@ -32,12 +39,17 @@ function download_mid {
     response=$(curl -s -o /dev/null -I -w "%{http_code}" $url)
     # if good response, download the image
     if [ $response -eq 200 ]; then
-        curl $url > m$1.jpg
+        curl $url > m$1.jpg 2> /dev/null
     fi
 }
 
 
 #-------------------------------------MAIN-------------------------------------#
+echo ""
+echo 'print("="*80)' | python
+echo 'print("="+" "*32 + "Photo Download" + " "*32 + "=")' | python
+echo 'print("="*80)' | python
+
 
 start_year=""
 index=0
@@ -50,7 +62,9 @@ if [ -f $progress_file ]; then
     start_year=${progress[0]}
     index=${progress[1]}
     alpha=${progress[2]}
-    echo "Resuming from ${start_year:2}$alpha"
+    resume=${start_year:2}
+    resume=$((resume + index))
+    echo "Resuming from ${resume}$alpha"
 
 # otherwise, figure out the date to know what classes can be updated
 else
@@ -58,8 +72,8 @@ else
     month=$(date '+%m')
     start_year=$year
 
-    # If past May, AY is next calendar year
-    if [[ month -ge 6 ]]; then
+    # If September, AY is next calendar year, hopefully MIDS photos in by now
+    if [[ month -ge 9 ]]; then
 	      start_year=$((start_year + 1))
     fi
 fi
@@ -70,6 +84,7 @@ for ((i=index; i < 3; i++)); do
   index=$i # update index for progress tracking
 	download_year $((start_year + i)) $alpha
   alpha=0000 # reset alpha in case we resumed
+  python3 -c  "print('\033[2A \r')"
 done
 
 echo ""
