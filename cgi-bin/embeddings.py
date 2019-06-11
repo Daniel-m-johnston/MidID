@@ -5,7 +5,7 @@ import os
 import sys
 import argparse
 from resize_imgs import exif_open
-from ..progress_bar import progress_bar
+from progress_bar import progress_bar
 
 def extract_embeddings_from_directory(unknown_photo_directory,alpha_named_files=True):
     '''
