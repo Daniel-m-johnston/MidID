@@ -108,3 +108,5 @@ for ((i=start_year; i<start_year+4; i++)); do
     python3 cgi-bin/embeddings.py imgs/MIDS/$i 2>> log.$(date +%Y.%m.%d)
     mv imgs/MIDS/$i.pkl embeddings_pkl/$i
 done
+
+rm -f .update_progress
