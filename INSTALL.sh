@@ -4,7 +4,7 @@
 
 # create a virtual environment to run in
 echo 'Creating virtual environment'
-python3 -m virtual-env venv
+python3 -m virtualenv venv
 source venv/bin/activate
 
 # install dependencies
