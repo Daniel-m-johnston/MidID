@@ -11,3 +11,4 @@ capture.png
 stats/*
 *.csv
 .update_progress
+log.*
