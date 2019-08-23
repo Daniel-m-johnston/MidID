@@ -8,6 +8,8 @@ Clone the repository, then run `INSTALL.sh`. This will set up a new Python virtu
 
 Once the photos are downloaded, it will then process them, creating the vector embeddings which are used to recognize faces. These are pickled and stored in the `embeddings_pkl` directory. 
 
+<h4> Updating Photos </h4>
+
 When a new Academic Year begins, run `update.sh` to download the latest MIDS photos.
 
 `update.sh` will track its progress in a hidden file, `.update_progress`
