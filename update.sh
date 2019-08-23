@@ -1,5 +1,7 @@
 #! /bin/bash
 
+AC_YEAR_START_MONTH=9
+
 progress_file='.update_progress'
 
 function progress_update {
@@ -71,10 +73,11 @@ if [ -f $progress_file ]; then
 else
     year=$(date '+%Y')
     month=$(date '+%m')
+    month=$((10#$month))
     start_year=$year
 
     # If September, AY is next calendar year, hopefully MIDS photos in by now
-    if [[ month -ge 9 ]]; then
+    if [[ month -ge $AC_YEAR_START_MONTH ]]; then
 	      start_year=$((start_year + 1))
     fi
 fi
